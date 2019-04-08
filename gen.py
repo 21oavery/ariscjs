@@ -1,5 +1,3 @@
-import io
-
 const_table = {
     "INS_LOAD":      0,
     "INS_LOAD_FP":   1,
@@ -34,11 +32,73 @@ const_table = {
     "INS_CUST_3":   30,
     "INS_???_31":   31,
     
-    "INS_REG_DEST":    "((ins >> 6) & 0x1F)",
-    "INS_REG_SAUCE_1": "((ins >> 15) & 0x1F)",
-    "INS_REG_SAUCE_2": "((ins >> 20) & 0x1F)",
-    "INS_FUN_3":       "((ins >> 12) & 7)",
-    "INS_FUN_7":       "((ins >> 25) & 0x7F)"
+    "INS_REG_DEST":    "((%1 >> 6) & 0x1F)",
+    "INS_REG_SAUCE_1": "((%1 >> 15) & 0x1F)",
+    "INS_REG_SAUCE_2": "((%1 >> 20) & 0x1F)",
+    "INS_FUN_3":       "((%1 >> 12) & 7)",
+    "INS_FUN_7":       "((%1 >> 25) & 0x7F)"
 }
 
-fIn = open("arisc-first.js", "r", encoding="utf-8")
+def tokenise(s, start, end)
+    if start == end:
+        return []
+    ret = []
+    while True:
+        lastPos = -1
+        for i in range(start, end):
+            if s[i] == " ":
+                if lastPos != -1:
+                    ret.add(s[lastPos:i])
+                    lastPos = -1
+            elif lastPos == -1:
+                lastPos = i
+        return ret
+
+def getReplacement(mArgs):
+    subV = const_table[mArgs[0]]
+    if not subV:
+        print("Warning: undefined macro: " + ts[0])
+        return ""
+    elif type(subV) == "<type 'str'>":
+        subS = string(subV)
+        pos = 0
+        while True:
+            sLen = len(subS)
+            if sLen <= pos:
+                break
+            locPos = subS.find("%")
+            if locPos == -1:
+                break
+            locEndPos = locPos + 1
+            while locEndPos < 
+            nLen = len(nString)
+            while sPos = subS.find(nString, i)
+                if sPos == -1:
+                    break
+                subS = subS[:sPos - 1] + ts[i] + subS[sPos + nLen:]
+        return subS
+    else:
+        return string(subV)
+
+v = False
+with open("arisc-lib-templet.js", "r") as fIn:
+    v = fIn.read()
+    print(v)
+
+s = 0
+while True:
+    posStart = v.find("{{", s)
+    if posStart == -1:
+        break
+    posEnd = v.find("}}", pos + 2)
+    if posEnd == -1:
+        break
+    ts = tokenise(s, posStart + 2, posEnd - 1)
+    if len(ts) == 0:
+        s = posEnd + 2
+        continue
+    else:
+
+with open("arisc-lib.js", "w") as fOut:
+    print(v)
+    fOut.write(v)

@@ -1,83 +1,44 @@
 (function() {
-    const reg_ustatus = 0;
-    const reg_uie = 1;
-    const reg_utvec = 2;
-    const reg_uscratch = 3;
-    const reg_uepc = 4;
-    const reg_ucause = 5;
-    const reg_utval = 6;
-    const reg_uip = 7;
-    const reg_fflags = 8;
-    const reg_frm = 9;
-    const reg_fcsr = 10;
-    const reg_cycle = 11;
-    const reg_time = 12;
-    const reg_instret = 13;
-    const reg_hpmcounter
-    let getCSRID = function(addr) {
-        addr |= 0;
-        switch (addr) {
-            case 0x000: return "ustatus";
-            case 0x004: return "uie";
-            case 0x005: return "utvec";
-            case 0x040: return "uscratch";
-            case 0x041: return "uepc";
-            case 0x042: return "ucause";
-            case 0x043: return "utval";
-            case 0x044: return "uip";
-            case 0x001: return "fflags";
-            case 0x002: return "frm";
-            case 0x003:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
-            case 0x000:
     let imProto = {
         "exec": function() {
             let pc = this.pc | 0;
             let ins = this.mem[pc] | 0;
+            let regI = this.regI;
             switch (ins & 3) {
                 case 3:
                     switch ((ins >> 2) & 31) {
-                        case 0:  // load {{{
-                        case 1:  // load-fp
-                        case 2:  // custom-0
-                        case 3:  // misc-mem
-                        case 4:  // op-imm
-                        case 5:  // auipc
-                        case 6:  // op-imm-32
-                        case 7:  // ???
-                        case 8:  // store
-                        case 9:  // store-fp
-                        case 10: // custom-1
-                        case 11: // amo
-                        case 12: // op
-                        case 13: // lui
-                        case 14: // op-32
-                        case 15: // ???
-                        case 16: // madd
-                        case 17: // msub
-                        case 18: // nmsub
-                        case 19: // nmadd
-                        case 20: // op-fp
-                      //case 21: // reserved
-                        case 22: // custom-2/128
-                        case 23: // ???
-                        case 24: // branch
-                        case 25: // jalr
-                      //case 26: // reserved
-                        case 27: // jal
-                        case 28: // system
-                      //case 29: // reserved
-                        case 30: // custom-3/128
-                        case 31: // ???
+                        case {{{INS_LOAD}}}:
+                        case {{{INS_LOAD_FP}}}:
+                        case {{{INS_CUST_0}}}:
+                        case {{{INS_MISC_MEM}}}:
+                        case {{{INS_OP_IMM}}}:
+                        case {{{INS_AUIPC}}}:
+                        case {{{INS_OP_IMM_32}}}:
+                        case {{{INS_???_7}}}:
+                        case {{{INS_STORE}}}:
+                        case {{{INS_STORE_FP}}}:
+                        case {{{INS_CUST_1}}}:
+                        case {{{INS_AMO}}}:
+                        case {{{INS_OP}}}:
+                        case {{{INS_LUI}}}:
+                        case {{{INS_OP_32}}}:
+                        case {{{INS_???_15}}}:
+                        case {{{INS_MADD}}}:
+                        case {{{INS_MSUB}}}:
+                        case {{{INS_NMSUB}}}:
+                        case {{{INS_NMADD}}}:
+                        case {{{INS_OP_FP}}}:
+                      //case {{{INS_RES_21}}}:
+                        case {{{INS_CUST_2}}}:
+                        case {{{INS_???_23}}}:
+                        case {{{INS_BRANCH}}}:
+                        case {{{INS_JALR}}}:
+                      //case {{{INS_RES_26}}}:
+                        case {{{INS_JAL}}}:
+                        case {{{INS_SYSTEM}}}:
+                      //case {{{INS_RES_29}}}:
+                        case {{{INS_CUST_3}}}:
+                        case {{{INS_???_31}}}:
                         default:
                             this.throw()
                     }

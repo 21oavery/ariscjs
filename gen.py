@@ -1,3 +1,5 @@
+import sys
+
 const_table = {
     "INS_LOAD":      0,
     "INS_LOAD_FP":   1,
@@ -39,7 +41,14 @@ const_table = {
     "INS_FUN_7":       "((%1 >> 25) & 0x7F)"
 }
 
-def tokenise(s, start, end)
+is3 = sys.version_info[0] == 3
+def checkIsString(v):
+    if is3:
+        return isinstance(v, str)
+    else:
+        return isinstance(v, basestring)
+
+def tokenise(s, start, end):
     if start == end:
         return []
     ret = []
@@ -48,10 +57,12 @@ def tokenise(s, start, end)
         for i in range(start, end):
             if s[i] == " ":
                 if lastPos != -1:
-                    ret.add(s[lastPos:i])
+                    ret.append(s[lastPos:i])
                     lastPos = -1
             elif lastPos == -1:
                 lastPos = i
+        if lastPos != -1:
+            ret.append(s[lastPos:end + 1])
         return ret
 
 def getReplacement(mArgs):
@@ -59,46 +70,59 @@ def getReplacement(mArgs):
     if not subV:
         print("Warning: undefined macro: " + ts[0])
         return ""
-    elif type(subV) == "<type 'str'>":
-        subS = string(subV)
+    elif checkIsString(subV):
+        subS = str(subV)
         pos = 0
         while True:
             sLen = len(subS)
             if sLen <= pos:
                 break
-            locPos = subS.find("%")
+            locPos = subS.find("%", pos)
             if locPos == -1:
                 break
             locEndPos = locPos + 1
-            while locEndPos < 
-            nLen = len(nString)
-            while sPos = subS.find(nString, i)
-                if sPos == -1:
+            while True:
+                if (locEndPos >= sLen) or (not subS[locEndPos].isdigit()):
                     break
-                subS = subS[:sPos - 1] + ts[i] + subS[sPos + nLen:]
+                locEndPos += 1
+            n = int(subS[locPos + 1:locEndPos])
+            subS = subS[:locPos] + mArgs[n] + subS[locEndPos:]
+            pos = locPos
         return subS
     else:
-        return string(subV)
+        return str(subV)
 
-v = False
+def replace(data):
+    pos = 0
+    rLen = 0
+    replacePos = []
+    while True:
+        if rLen == 0:
+            sLen = len(data)
+            if sLen <= pos:
+                break
+            locPos = data.find("{{{", pos)
+            if locPos == -1:
+                break
+            pos = locPos
+            replacePos.append(locPos)
+            rLen = 1
+        e = replacePos[rLen - 1]
+        locEndPos = data.find("}}}", e + 3)
+        if locEndPos == -1:
+            break
+        locNextPos = data.find("{{{", e + 3)
+        if (locNextPos != -1) and (locNextPos < locEndPos):
+            replacePos.append(locNextPos)
+            rLen += 1
+            continue
+        data = data[:e] + getReplacement(tokenise(data, e + 3, locEndPos - 1)) + data[locEndPos + 3:]
+        rLen -= 1
+        replacePos[rLen] = None
+    return data
+
 with open("arisc-lib-templet.js", "r") as fIn:
     v = fIn.read()
-    print(v)
-
-s = 0
-while True:
-    posStart = v.find("{{", s)
-    if posStart == -1:
-        break
-    posEnd = v.find("}}", pos + 2)
-    if posEnd == -1:
-        break
-    ts = tokenise(s, posStart + 2, posEnd - 1)
-    if len(ts) == 0:
-        s = posEnd + 2
-        continue
-    else:
-
-with open("arisc-lib.js", "w") as fOut:
-    print(v)
-    fOut.write(v)
+    with open("arisc-lib.js", "w") as fOut:
+        v = replace(v)
+        fOut.write(v)

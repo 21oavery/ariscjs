@@ -60,7 +60,7 @@
                         case 11: // amo
                         case 12: // op
                         case 13: // lui
-                        case 14: // op-32
+                        case 14: // op-32 ((27 >> 25) & 0x7F)
                         case 15: // ???
                         case 16: // madd
                         case 17: // msub

@@ -34,11 +34,14 @@ const_table = {
     "INS_CUST_3":   30,
     "INS_???_31":   31,
     
-    "INS_REG_DEST":    "((%1 >> 6) & 0x1F)",
-    "INS_REG_SAUCE_1": "((%1 >> 15) & 0x1F)",
-    "INS_REG_SAUCE_2": "((%1 >> 20) & 0x1F)",
-    "INS_FUN_3":       "((%1 >> 12) & 7)",
-    "INS_FUN_7":       "((%1 >> 25) & 0x7F)"
+    "INS_REG_DEST":    "(((%1) >> 6) & 0x1F)",
+    "INS_REG_SAUCE_1": "(((%1) >> 15) & 0x1F)",
+    "INS_REG_SAUCE_2": "(((%1) >> 20) & 0x1F)",
+    "INS_FUN_3":       "(((%1) >> 12) & 7)",
+    "INS_FUN_7":       "(((%1) >> 25) & 0x7F)",
+    "INS_IMM_I":       "((%1) >> 20)",
+    "INS_IMM_S":       "((((%1) >> 7) & 0x1F) | ((%1) >> 25))",
+    "INS_IMM_B":       "(((%1) >> 7) & 0x
 }
 
 is3 = sys.version_info[0] == 3

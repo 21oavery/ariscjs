@@ -12,6 +12,11 @@
                         case {{{INS_CUST_0}}}:
                         case {{{INS_MISC_MEM}}}:
                         case {{{INS_OP_IMM}}}:
+                            switch ({{{INS_FUN_3 ins}}}) {
+                                case {{{F3_ADDI}}}:
+                                    regI[{{{INS_REG_DEST ins}}}] = regI[{{{INS_REG_SAUCE_1 ins}}}] + {{{INS_IMM_I ins}}};
+                                    break;
+                                case {{{F3_
                         case {{{INS_AUIPC}}}:
                         case {{{INS_OP_IMM_32}}}:
                         case {{{INS_???_7}}}:

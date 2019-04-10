@@ -34,6 +34,14 @@ const_table = {
     "INS_CUST_3":   30,
     "INS_???_31":   31,
     
+    "F3_ADDI": 0,
+    "F3_SLTI": 2,
+    "F3_ANDI": 7,
+    "F3_ORI":  6,
+    "F3_XORI": 4,
+    "F3_SLLI": 1,
+    "F3_SRLI": 5,
+    
     "INS_REG_DEST":    "(((%1) >> 6) & 0x1F)",
     "INS_REG_SAUCE_1": "(((%1) >> 15) & 0x1F)",
     "INS_REG_SAUCE_2": "(((%1) >> 20) & 0x1F)",

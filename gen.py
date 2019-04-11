@@ -1,6 +1,9 @@
 import sys
 
 const_table = {
+    "MASK_FULL": "{{{MATH - {{{MATH << 1 %1}}} 1}}}",
+    "MASK":      "{{{MATH ^ {{{MASK_FULL %1}}} {{{MASK_FULL {{{MATH - %2 1}}} }}} }}}"
+
     "INS_LOAD":      0,
     "INS_LOAD_FP":   1,
     "INS_CUST_0":    2,
@@ -34,14 +37,16 @@ const_table = {
     "INS_CUST_3":   30,
     "INS_???_31":   31,
     
-    "INS_REG_DEST":    "(((%1) >> 6) & 0x1F)",
-    "INS_REG_SAUCE_1": "(((%1) >> 15) & 0x1F)",
-    "INS_REG_SAUCE_2": "(((%1) >> 20) & 0x1F)",
-    "INS_FUN_3":       "(((%1) >> 12) & 7)",
-    "INS_FUN_7":       "(((%1) >> 25) & 0x7F)",
-    "INS_IMM_I":       "((%1) >> 20)",
-    "INS_IMM_S":       "((((%1) >> 7) & 0x1F) | ((%1) >> 25))",
-    "INS_IMM_B":       "(((%1) >> 7) & 0x
+    "FRM_REG_DEST":    "(((%1) >> 6) & 0x1F)",
+    "FRM_REG_SAUCE_1": "(((%1) >> 15) & 0x1F)",
+    "FRM_REG_SAUCE_2": "(((%1) >> 20) & 0x1F)",
+    "FRM_FUN_3":       "(((%1) >> 12) & 7)",
+    "FRM_FUN_7":       "(((%1) >> 25) & 0x7F)",
+    "FRM_IMM_I":       "((%1) >> 20)",
+    "FRM_IMM_S":       "((((%1) >> 7) & 0x1F) | (((%1) >> 20) & 0xfd0)",
+    "FRM_IMM_B":       "((((%1) >> 7) & 0x2E) | (((%1) >> 20) & 0x7d0) | (((%1) << 4) & 0x400) | (((%1) >> 19) & 0x800))",
+    "FRM_IMM_U":       "((%1) & 0xfffff800)",
+    "FRM_IMM_J":       "(((%1) & 800) | () | () | ())"
 }
 
 is3 = sys.version_info[0] == 3
@@ -74,24 +79,38 @@ def getReplacement(mArgs):
         print("Warning: undefined macro: " + ts[0])
         return ""
     elif checkIsString(subV):
-        subS = str(subV)
-        pos = 0
-        while True:
-            sLen = len(subS)
-            if sLen <= pos:
-                break
-            locPos = subS.find("%", pos)
-            if locPos == -1:
-                break
-            locEndPos = locPos + 1
+        if subV == "MATH":
+            s = {
+                ">>": lambda: str(int(mArgs.get(1, 0)) >> int(mArgs.get(2, 0))),
+                "<<": lambda: str(int(mArgs.get(1, 0)) << int(mArgs.get(2, 0))),
+                "&": lambda: str(int(mArgs.get(1, 0)) & int(mArgs.get(2, 0))),
+                "|": lambda: str(int(mArgs.get(1, 0)) | int(mArgs.get(2, 0))),
+                "^": lambda: str(int(mArgs.get(1, 0)) ^ int(mArgs.get(2, 0))),
+                "+": lambda: str(int(mArgs.get(1, 0)) + int(mArgs.get(2, 0))),
+                "-": lambda: str(int(mArgs.get(1, 0)) - int(mArgs.get(2, 0))),
+                "*": lambda: str(int(mArgs.get(1, 0)) * int(mArgs.get(2, 0))),
+                "/": lambda: str(int(mArgs.get(1, 0)) / int(mArgs.get(2, 0)))
+            }
+            return s.get(mArgs[0], lambda: "")()
+        else:
+            subS = str(subV)
+            pos = 0
             while True:
-                if (locEndPos >= sLen) or (not subS[locEndPos].isdigit()):
+                sLen = len(subS)
+                if sLen <= pos:
                     break
-                locEndPos += 1
-            n = int(subS[locPos + 1:locEndPos])
-            subS = subS[:locPos] + mArgs[n] + subS[locEndPos:]
-            pos = locPos
-        return subS
+                locPos = subS.find("%", pos)
+                if locPos == -1:
+                    break
+                locEndPos = locPos + 1
+                while True:
+                    if (locEndPos >= sLen) or (not subS[locEndPos].isdigit()):
+                        break
+                    locEndPos += 1
+                n = int(subS[locPos + 1:locEndPos])
+                subS = subS[:locPos] + mArgs[n] + subS[locEndPos:]
+                pos = locPos
+            return subS
     else:
         return str(subV)
 

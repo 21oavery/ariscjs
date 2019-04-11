@@ -66,6 +66,57 @@ const_table = {
     "INS_IMM_B":       "(((%1) >> 7) & 0x"
 }
 
+def listify(s):
+    curEle = {"parent": None, "children": []}
+    i = 0
+    while i < len(s):
+        c = s[i]
+        if c == "(":
+            e = {"parent": curEle, "children": []}
+            curEle.children.add(e)
+            curEle = e
+        elif c == ")":
+            if e.parent == None:
+                print("Error scanning list: extra terminator")
+                return
+            curEle = curEle.parent
+        elif c == "\"":
+            string = ""
+            lastPos = -1
+            j = i + 1
+            bkSlash = False
+            while True:
+                if j >= len(s):
+                    print("Error terminating string")
+                    return
+                cc = s[j]
+                if bkSlash:
+                    if lastPos != -1:
+                        string += s[lastPos:j - 1]
+                    if cc == "n":
+                        cc = "\n"
+                    string += cc
+                    lastPos = -1
+                    bkSlash = False
+                elif cc == "\\":
+                    bkSlash = True
+                elif cc == "\"":
+                    if lastPos != -1:
+                        string += s[lastPos:j]
+                else:
+                    if lastPos == -1:
+                        lastPos = j
+                j += 1
+            curEle.children.add(string)
+            i = j + 1
+        elif c == "'":
+            j = i + 1
+            while j < len(s):
+                
+
+def execLisp(s):
+    
+
 is3 = sys.version_info[0] == 3
 def checkIsString(v):
     if is3:
